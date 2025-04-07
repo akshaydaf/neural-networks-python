@@ -1,0 +1,7 @@
+name: nn-p
+channels:
+  - defaults
+dependencies:
+  - numpy
+  - pyyaml=5.4.1
+  - matplotlib
