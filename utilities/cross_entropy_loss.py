@@ -8,4 +8,4 @@ def cross_entropy_loss(y, x_pred):
     :param x_pred: (batch_size, class_size)
     :return: float
     """
-    return (-1/len(y)) * np.sum(np.log(x_pred[np.arange(len(y)), y]))
+    return (-1 / len(y)) * np.sum(np.log(x_pred[np.arange(len(y)), y]))

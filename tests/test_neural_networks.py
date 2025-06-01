@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from utilities.neural_networks import NeuralNetworks
+from model.neural_networks import NeuralNetworks
 
 
 class TestNeuralNetwork(unittest.TestCase):
@@ -13,9 +13,11 @@ class TestNeuralNetwork(unittest.TestCase):
         x = np.random.rand(batch_size, input_size)
         y = np.random.randint(0, num_classes, size=(batch_size,))
 
-        model = NeuralNetworks(input_size=input_size, hidden_dim=128, output_size=num_classes)
+        model = NeuralNetworks(
+            input_size=input_size, hidden_dim=128, output_size=num_classes
+        )
 
-        loss = model.forward(x, y, mode='train')
+        loss = model.forward(x, y, mode="train")
 
         self.assertIsInstance(loss, float)
         self.assertGreater(loss, 0.0)

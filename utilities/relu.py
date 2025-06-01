@@ -1,4 +1,3 @@
-
 def relu_forward(x):
     """
     Forward Pass of ReLU
