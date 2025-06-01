@@ -1,5 +1,8 @@
 from sklearn.datasets import fetch_openml
 import pandas as pd
+import numpy as np
+
+np.random.seed(42)
 
 
 def get_data():
@@ -21,8 +24,22 @@ def get_data():
     print("Saved mnist_train.csv and mnist_test.csv!")
 
 
-def get_batches(is_get_train):
+def split_data(data, batch_size):
+    chunks = [data[i : i + batch_size] for i in range(0, len(data), batch_size)]
+    return chunks
+
+
+def get_batches(is_get_train, should_shuffle=True, batch_size=17):
     if is_get_train:
         df = pd.read_csv("mnist_train.csv")
     else:
         df = pd.read_csv("mnist_test.csv")
+    data = df.to_numpy()
+    if should_shuffle:
+        np.random.shuffle(data)
+    image_data = data[:, 1:]
+    label_data = data[:, 0]
+    image_splits = split_data(image_data, batch_size)
+    label_splits = split_data(label_data, batch_size)
+
+    return image_splits, label_splits
