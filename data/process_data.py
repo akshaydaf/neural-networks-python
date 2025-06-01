@@ -25,11 +25,24 @@ def get_data():
 
 
 def split_data(data, batch_size):
+    """
+    Split data for training and testing
+    :param data: ndarray, data to split
+    :param batch_size: int, size of each batch
+    :return: chunks:
+    """
     chunks = [data[i : i + batch_size] for i in range(0, len(data), batch_size)]
     return chunks
 
 
-def get_batches(is_get_train, should_shuffle=True, batch_size=17):
+def get_batches(is_get_train=True, should_shuffle=True, batch_size=32):
+    """
+    Splits image and label data into chunks and returns it
+    :param is_get_train: boolean, should be chunking train or test
+    :param should_shuffle: boolean, should be shuffling
+    :param batch_size: int, size of each chunk
+    :return: (image_splits, label_splits)
+    """
     if is_get_train:
         df = pd.read_csv("mnist_train.csv")
     else:
@@ -41,5 +54,4 @@ def get_batches(is_get_train, should_shuffle=True, batch_size=17):
     label_data = data[:, 0]
     image_splits = split_data(image_data, batch_size)
     label_splits = split_data(label_data, batch_size)
-
     return image_splits, label_splits
