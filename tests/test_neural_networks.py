@@ -17,8 +17,8 @@ class TestNeuralNetwork(unittest.TestCase):
             input_size=input_size, hidden_dim=128, output_size=num_classes
         )
 
-        loss = model.forward(x, y, mode="train")
+        loss, acc = model.forward(x, y, mode="train")
 
         self.assertIsInstance(loss, float)
         self.assertGreater(loss, 0.0)
-        self.assertLess(loss, 10.0)  # a loose sanity check
+        self.assertLess(loss, 10.0)

@@ -41,12 +41,12 @@ def get_batches(is_get_train=True, should_shuffle=True, batch_size=32):
     :param is_get_train: boolean, should be chunking train or test
     :param should_shuffle: boolean, should be shuffling
     :param batch_size: int, size of each chunk
-    :return: (image_splits, label_splits)
+    :return: tuple(list, list), (image_splits, label_splits)
     """
     if is_get_train:
-        df = pd.read_csv("mnist_train.csv")
+        df = pd.read_csv("data/mnist_train.csv")
     else:
-        df = pd.read_csv("mnist_test.csv")
+        df = pd.read_csv("data/mnist_test.csv")
     data = df.to_numpy()
     if should_shuffle:
         np.random.shuffle(data)
