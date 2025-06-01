@@ -1,4 +1,6 @@
 import numpy as np
+
+from utilities.accuracy import get_accuracy
 from utilities.cross_entropy_loss import cross_entropy_loss as ce_loss
 from utilities.softmax import calculate_softmax as softmax
 from utilities.relu import relu_forward, relu_backward
@@ -17,6 +19,7 @@ class NeuralNetworks:
         self.hidden_dim = hidden_dim
         self.output_size = output_size
         self.init_weights()
+        self.init_gradients()
 
     def init_weights(self):
         """Initialization of weights"""
@@ -53,10 +56,11 @@ class NeuralNetworks:
         relu_output = relu_forward(layer_1_output)
         layer_2_output = relu_output @ self.params["w2"] + self.params["b2"]
         softmax_output = softmax(layer_2_output)
+        accuracy = get_accuracy(softmax_output, y)
 
         loss = ce_loss(y, softmax_output)
         if mode != "train":
-            return loss
+            return loss, accuracy
 
         ## partials for ce loss and softmax function.
         ##  This gives the gradient of the loss wrt. the softmax inputs
@@ -71,4 +75,4 @@ class NeuralNetworks:
         relu_der = grad_layer_2_x_input * relu_backward(layer_1_output)
         self.params["grad_w1"] = (1 / batch_size) * x.T @ relu_der
         self.params["grad_b1"] = (1 / batch_size) * np.sum(relu_der, axis=0)
-        return loss
+        return loss, accuracy
