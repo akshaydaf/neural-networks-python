@@ -6,8 +6,12 @@ np.random.seed(42)
 
 
 def get_data():
-    """
-    Creates Train and Test CSVs for batching into NN Training
+    """Download and create train and test CSV files for neural network training.
+    
+    Downloads the MNIST dataset and splits it into training and testing sets,
+    then saves them as CSV files for later use.
+    
+    :return: None
     """
     mnist = fetch_openml("mnist_784", version=1, as_frame=False)
     X, y = mnist["data"], mnist["target"]
@@ -25,23 +29,23 @@ def get_data():
 
 
 def split_data(data, batch_size):
-    """
-    Split data for training and testing
+    """Split data into batches of specified size.
+    
     :param data: ndarray, data to split
     :param batch_size: int, size of each batch
-    :return: chunks:
+    :return: list of data chunks, each of size batch_size (except possibly the last one)
     """
     chunks = [data[i : i + batch_size] for i in range(0, len(data), batch_size)]
     return chunks
 
 
 def get_batches(is_get_train=True, should_shuffle=True, batch_size=32):
-    """
-    Splits image and label data into chunks and returns it
-    :param is_get_train: boolean, should be chunking train or test
-    :param should_shuffle: boolean, should be shuffling
-    :param batch_size: int, size of each chunk
-    :return: tuple(list, list), (image_splits, label_splits)
+    """Load and split image and label data into batches.
+    
+    :param is_get_train: boolean, whether to use training data (True) or test data (False)
+    :param should_shuffle: boolean, whether to shuffle the data before batching
+    :param batch_size: int, size of each batch
+    :return: tuple(list, list), containing (image_batches, label_batches)
     """
     if is_get_train:
         df = pd.read_csv("data/mnist_train.csv")
