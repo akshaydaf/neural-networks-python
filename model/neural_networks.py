@@ -12,7 +12,12 @@ np.set_printoptions(threshold=sys.maxsize)
 
 class NeuralNetworks:
     def __init__(self, input_size=28 * 28, hidden_dim=128, output_size=10):
-        """Init Function"""
+        """Initialize the Neural Network with specified dimensions.
+
+        :param input_size: Size of the input layer, defaults to 28*28 (MNIST image size)
+        :param hidden_dim: Size of the hidden layer, defaults to 128
+        :param output_size: Size of the output layer, defaults to 10 (number of classes in MNIST)
+        """
 
         self.params = dict()
         self.input_size = input_size
@@ -20,9 +25,13 @@ class NeuralNetworks:
         self.output_size = output_size
         self.init_weights()
         self.init_gradients()
+        self.logits = None
 
     def init_weights(self):
-        """Initialization of weights"""
+        """Initialize the weights and biases of the neural network.
+
+        Uses He initialization for weights and zeros for biases.
+        """
 
         self.params["w1"] = (
             2
@@ -38,7 +47,10 @@ class NeuralNetworks:
         self.params["b2"] = np.zeros(self.output_size)
 
     def init_gradients(self):
-        """Initialization of gradients"""
+        """Initialize the gradient matrices and vectors to zeros.
+
+        Creates gradient placeholders for weights and biases that will be updated during training.
+        """
 
         self.params["grad_w1"] = np.zeros_like((self.input_size, self.hidden_dim))
         self.params["grad_b1"] = np.zeros(self.hidden_dim)
@@ -46,15 +58,18 @@ class NeuralNetworks:
         self.params["grad_b2"] = np.zeros(self.output_size)
 
     def forward(self, x, y, mode="train"):
-        """Forward pass of neural network.
-        :param x: (batch_size, 28x28)
-        :param y: (batch_size)
-        :param mode: train or test
+        """Perform the forward pass of the neural network.
+
+        :param x: Input data with shape (batch_size, 28x28)
+        :param y: Ground truth labels with shape (batch_size)
+        :param mode: Operation mode, either 'train' or 'test'
+        :return: Tuple of (loss, accuracy)
         """
         batch_size = x.shape[0]
         layer_1_output = x @ self.params["w1"] + self.params["b1"]
         relu_output = relu_forward(layer_1_output)
         layer_2_output = relu_output @ self.params["w2"] + self.params["b2"]
+        self.logits = layer_2_output
         softmax_output = softmax(layer_2_output)
         accuracy = get_accuracy(softmax_output, y)
 

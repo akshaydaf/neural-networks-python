@@ -1,58 +1,110 @@
 from data.process_data import get_batches
 from model.neural_networks import NeuralNetworks
 from utilities.optimizer import Optimizer
-from tqdm import tqdm
+from tqdm.notebook import tqdm
 import numpy as np
 import matplotlib.pyplot as plt
+import yaml
+import copy
+
+
+def load_config(file_path):
+    """Load configuration from a YAML file.
+
+    :param file_path: string, path to the YAML configuration file
+    :return: dict containing configuration parameters, or None if loading fails
+    """
+    with open(file_path, "r") as file:
+        try:
+            config = yaml.safe_load(file)
+            return config
+        except yaml.YAMLError as e:
+            print(f"Error loading YAML file: {e}")
+            return None
 
 
 class Trainer:
-    def __init__(self):
+    def __init__(self, config_file_name="configs/config.yaml"):
         self.training_loss_across_epochs = []
         self.validation_loss_across_epochs = []
         self.training_accuracy_across_epochs = []
         self.validation_accuracy_across_epochs = []
+        self.gradient_absolute_values = []
+        self.model = NeuralNetworks()
+        self.initial_weight_values_w1 = copy.deepcopy(self.model.params["w1"])
+        self.raw_image_map = np.zeros(self.model.input_size)
+        self.config_file_name = config_file_name
 
     def train(self):
-        """
-        Training loop for neural network
-        """
-        x, y = get_batches(
-            is_get_train=True, should_shuffle=True, batch_size=64
-        )  ## TODO: Replace with config
-        x_test, y_test = get_batches(
-            is_get_train=False, should_shuffle=True, batch_size=64
-        )  ## TODO: Replace with config
-        model = NeuralNetworks()
-        epochs = 10
-        optimizer = Optimizer(learning_rate=1e-4)
+        """Execute the training loop for the neural network.
 
-        for epoch in range(epochs):
+        Loads configuration, prepares data batches, initializes the optimizer,
+        and runs the training loop for the specified number of epochs.
+        Updates internal tracking variables for loss and accuracy metrics.
+
+        :return: None
+        """
+        config = load_config(self.config_file_name)
+
+        x, y = get_batches(
+            is_get_train=True, should_shuffle=True, batch_size=config["batch_size"]
+        )
+        x_test, y_test = get_batches(
+            is_get_train=False, should_shuffle=True, batch_size=config["batch_size"]
+        )
+        optimizer = Optimizer(
+            learning_rate=config["learning_rate"],
+            regularization_coeff=config["reg"],
+            mode=config["mode"],
+        )
+
+        for epoch in tqdm(
+            range(config["epochs"]),
+            desc="Training and Validation by Epoch",
+            bar_format="🟩{desc}: {bar}🟥 {percentage:3.0f}%",
+        ):
             epoch_training_loss = 0.0
             epoch_training_accuracy = 0.0
 
             epoch_validation_loss = 0.0
             epoch_validation_accuracy = 0.0
             total_samples = 0
-            for index in tqdm(range(len(x))):
-                optimizer.zero_grad(model)
-                loss, acc = model.forward(np.array(x[index]), np.array(y[index]))
+            total_gradient_sum_per_epoch = 0
+            for index in range(len(x)):
+                optimizer.zero_grad(self.model)
+                loss, acc = self.model.forward(np.array(x[index]), np.array(y[index]))
                 epoch_training_accuracy += acc * len(x[index])
-                total_samples += len(x[index])
                 epoch_training_loss += loss
-                optimizer.update(model)
+
+                # Used for later analysis, not directly relevant to training
+                self.raw_image_map += np.sum(x[index], axis=0)
+                total_gradient_sum_per_epoch += np.sum(
+                    np.absolute(self.model.params["grad_w1"])
+                ) + np.sum(np.absolute(self.model.params["grad_w2"]))
+                total_samples += len(x[index])
+                # Done with analysis block
+
+                optimizer.update(self.model)
+
             epoch_training_loss /= len(x)
             epoch_training_accuracy /= total_samples
             self.training_loss_across_epochs.append(epoch_training_loss)
             self.training_accuracy_across_epochs.append(epoch_training_accuracy)
+
+            # Used for later analysis, not directly relevant to training
+            total_gradient_sum_per_epoch /= len(x)
+            self.raw_image_map /= len(x)
+            self.gradient_absolute_values.append(total_gradient_sum_per_epoch)
+            # Done with analysis block
+
             total_samples = 0
-            for index in tqdm(range(len(x_test))):
-                loss, acc = model.forward(
-                    np.array(x_test[index]), np.array(y_test[index])
+            for index in range(len(x_test)):
+                loss, acc = self.model.forward(
+                    np.array(x_test[index]), np.array(y_test[index]), "test"
                 )
 
-                epoch_validation_accuracy += acc * len(x[index])
-                total_samples += len(x[index])
+                epoch_validation_accuracy += acc * len(x_test[index])
+                total_samples += len(x_test[index])
                 epoch_validation_loss += loss
             epoch_validation_loss /= len(x_test)
             epoch_validation_accuracy /= total_samples
@@ -60,8 +112,12 @@ class Trainer:
             self.validation_accuracy_across_epochs.append(epoch_validation_accuracy)
 
     def generate_plots(self):
-        """
-        Generate Plots for the loss and accuracy curves
+        """Generate and display plots for training and validation metrics.
+
+        Creates plots showing the loss and accuracy curves for both
+        training and validation data across all training epochs.
+
+        :return: None
         """
         train_loss_x_axis = list(range(len(self.training_loss_across_epochs)))
         train_loss_y_axis = self.training_loss_across_epochs

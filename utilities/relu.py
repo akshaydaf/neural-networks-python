@@ -1,8 +1,8 @@
 def relu_forward(x):
-    """
-    Forward Pass of ReLU
-    :param x: variable length input
-    :return: variable length output in the same shape as input
+    """Apply the ReLU activation function to the input.
+
+    :param x: ndarray of any shape, input data
+    :return: ndarray of the same shape as input, with ReLU applied
     """
     mask = x <= 0
     x[mask] = 0
@@ -10,10 +10,10 @@ def relu_forward(x):
 
 
 def relu_backward(x):
-    """
-    Derivative of the ReLU function
-    :param x: variable length input
-    :return: variable length output in the same shape as input
+    """Calculate the derivative of the ReLU function.
+
+    :param x: ndarray of any shape, input data
+    :return: ndarray of the same shape as input, with derivative of ReLU applied
     """
     mask = x <= 0
     x[mask] = 0

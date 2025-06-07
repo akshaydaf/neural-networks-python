@@ -5,6 +5,10 @@ from model.neural_networks import NeuralNetworks
 
 class TestNeuralNetwork(unittest.TestCase):
     def test_forward_pass_loss_output(self):
+        """Test that the forward pass produces valid loss and accuracy values.
+        
+        :return: None
+        """
         np.random.seed(0)
         batch_size = 4
         input_size = 28 * 28

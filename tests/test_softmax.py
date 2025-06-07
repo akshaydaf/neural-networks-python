@@ -5,6 +5,10 @@ from utilities.softmax import calculate_softmax
 
 class TestSoftmax(unittest.TestCase):
     def test_softmax(self):
+        """Test that softmax function correctly computes probabilities.
+        
+        :return: None
+        """
         x = np.array(
             [
                 [-1.48839468, -0.31530738],

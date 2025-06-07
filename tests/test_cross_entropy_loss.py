@@ -5,6 +5,10 @@ from utilities.cross_entropy_loss import cross_entropy_loss
 
 class TestNumpyCrossEntropyLoss(unittest.TestCase):
     def test_cross_entropy_loss(self):
+        """Test cross entropy loss calculation against expected values.
+        
+        :return: None
+        """
         x_pred = np.array(
             [
                 [0.75, 0.15, 0.10],

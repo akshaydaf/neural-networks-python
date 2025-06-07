@@ -2,7 +2,7 @@ import numpy as np
 
 
 def get_accuracy(x, y):
-    """
+    """Calculate the accuracy of model predictions.
 
     :param x: ndarray (B, num_classes), the softmax probabilities computed by the network
     :param y: ndarray (B,), actual values
