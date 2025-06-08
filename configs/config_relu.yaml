@@ -1,0 +1,5 @@
+batch_size: 64
+learning_rate: 0.001
+reg: 1
+epochs: 10
+mode: l2
