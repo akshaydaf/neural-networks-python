@@ -24,13 +24,18 @@ def load_config(file_path):
 
 
 class Trainer:
-    def __init__(self, config_file_name="configs/config.yaml"):
+    def __init__(self, config_file_name="configs/config.yaml", activation="relu"):
+        """Initialize the Trainer.
+
+        :param config_file_name: Configuration file string path
+        :param activation: Type of activation, defaults to relu
+        """
         self.training_loss_across_epochs = []
         self.validation_loss_across_epochs = []
         self.training_accuracy_across_epochs = []
         self.validation_accuracy_across_epochs = []
         self.gradient_absolute_values = []
-        self.model = NeuralNetworks()
+        self.model = NeuralNetworks(activation=activation)
         self.initial_weight_values_w1 = copy.deepcopy(self.model.params["w1"])
         self.raw_image_map = np.zeros(self.model.input_size)
         self.config_file_name = config_file_name
