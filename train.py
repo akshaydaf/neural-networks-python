@@ -1,11 +1,13 @@
 from data.process_data import get_batches
 from model.neural_networks import NeuralNetworks
-from utilities.optimizer import Optimizer
 from tqdm.notebook import tqdm
 import numpy as np
 import matplotlib.pyplot as plt
 import yaml
 import copy
+
+from utilities.sgd_momentum import SGDMomentum
+from utilities.sgd_optimizer import SGD
 
 
 def load_config(file_path):
@@ -57,10 +59,19 @@ class Trainer:
         x_test, y_test = get_batches(
             is_get_train=False, should_shuffle=True, batch_size=config["batch_size"]
         )
-        optimizer = Optimizer(
-            learning_rate=config["learning_rate"],
-            regularization_coeff=config["reg"],
-            mode=config["mode"],
+        optimizer = (
+            SGD(
+                learning_rate=config["learning_rate"],
+                regularization_coeff=config["reg"],
+                mode=config["mode"],
+            )
+            if config["optimizer"] == "sgd"
+            else SGDMomentum(
+                momentum=config["momentum"],
+                learning_rate=config["learning_rate"],
+                regularization_coeff=config["reg"],
+                mode=config["mode"],
+            )
         )
 
         for epoch in tqdm(

@@ -7,7 +7,9 @@ fundamentals of deep learning.
 
 ## Project Overview
 
-This project implements a neural network framework from scratch using NumPy. It provides an implementation of feedforward neural networks with backpropagation, designed primarily for the MNIST handwritten digit classification task.
+This project implements a neural network framework from scratch using NumPy. It provides an implementation of
+feedforward neural networks with backpropagation, designed primarily for the MNIST handwritten digit classification
+task.
 
 Key features:
 
@@ -35,12 +37,17 @@ neural-networks-python/
 │   ├── test_optimizer.py   # Tests for optimizer
 │   ├── test_process_data.py # Tests for data processing
 │   ├── test_relu.py        # Tests for ReLU activation
+│   ├── test_sgd_momentum_optimizer.py # Tests for SGD with momentum
+│   ├── test_sgd_optimizer.py # Tests for standard SGD
+│   ├── test_sigmoid.py     # Tests for sigmoid activation
 │   └── test_softmax.py     # Tests for softmax activation
 ├── utilities/              # Utility functions
+│   ├── _base_optimizer.py  # Base optimizer class with common functionality
 │   ├── accuracy.py         # Accuracy calculation
 │   ├── cross_entropy_loss.py # Loss function implementation
-│   ├── optimizer.py        # Gradient descent optimization
 │   ├── relu.py             # ReLU activation function
+│   ├── sgd_momentum.py     # SGD with momentum optimizer implementation
+│   ├── sgd_optimizer.py    # Standard SGD optimizer implementation
 │   ├── sigmoid.py          # Sigmoid activation function
 │   └── softmax.py          # Softmax activation function
 ├── environment.yaml        # Conda environment specification
@@ -55,10 +62,10 @@ neural-networks-python/
 The implementation includes:
 
 - A fully-connected neural network with configurable hidden layers
-- ReLU activation for hidden layers
-- Softmax activation for the output layer
+- ReLU and Sigmoid activations for hidden layers
+- Softmax function for the output layer
 - Cross-entropy loss function
-- Simple mini-batch stochastic gradient descent optimizer
+- Optimization algorithms including standard SGD and SGD with momentum
 - L1 and L2 regularization
 
 The default architecture is designed for MNIST classification:
@@ -134,7 +141,11 @@ The utilities directory contains modular implementations of:
 - Activation functions (ReLU, Sigmoid)
 - Loss function (Cross-entropy)
 - Accuracy calculation
-- Optimization algorithm (Gradient descent with L1/L2 regularization)
+- Optimization algorithms:
+  - Base optimizer with common functionality (_BaseOptimizer)
+  - Standard SGD optimizer (SGD)
+  - SGD with momentum optimizer (SGDMomentum)
+- Support for L1 and L2 regularization in all optimizers
 
 ### Visualization
 
@@ -150,7 +161,7 @@ The `generate_visuals.py` module provides functions for:
 The project includes unit tests for all major components. To run the tests:
 
 ```bash
-pytest tests/
+python -m unittest/
 ```
 
 ## Acknowledgments
