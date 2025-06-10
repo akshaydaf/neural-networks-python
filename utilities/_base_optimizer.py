@@ -1,9 +1,9 @@
 import numpy as np
 
 
-class Optimizer:
+class _BaseOptimizer:
     def __init__(self, learning_rate=1e-4, regularization_coeff=1e-4, mode="l2"):
-        """Initialize the optimizer with specified parameters.
+        """Initialize the Base Optimizer with specified parameters.
 
         :param learning_rate: float, learning rate for optimizer
         :param regularization_coeff: float, regularization coefficient for weight decay
@@ -19,9 +19,7 @@ class Optimizer:
         :param model: instance of NeuralNetworks class
         :return: None
         """
-        self.apply_regularization(model)
-        model.params["w1"] -= self.lr * model.params["grad_w1"]
-        model.params["w2"] -= self.lr * model.params["grad_w2"]
+        raise NotImplementedError("Each Optimizer must implement its own update method")
 
     def apply_regularization(self, model):
         """Apply regularization to the model's gradients.

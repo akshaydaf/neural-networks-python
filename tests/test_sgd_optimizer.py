@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import MagicMock
-from utilities.optimizer import Optimizer
+from utilities.sgd_optimizer import SGD
 import numpy as np
 
 
@@ -30,7 +30,7 @@ class TestOptimizer(unittest.TestCase):
                 self.params = {"w1": 2.0, "w2": -3.0, "grad_w1": 0.5, "grad_w2": -1.0}
 
         model = DummyModel()
-        optimizer = Optimizer(learning_rate=0.1, regularization_coeff=0)
+        optimizer = SGD(learning_rate=0.1, regularization_coeff=0)
         optimizer.update(model)
 
         self.assertAlmostEqual(model.params["w1"], 2.0 - 0.1 * 0.5)
@@ -43,7 +43,7 @@ class TestOptimizer(unittest.TestCase):
         """
         # Create a mock model with a MagicMock method
         model = MagicMock()
-        Optimizer.zero_grad(model)
+        SGD.zero_grad(model)
 
         model.init_gradients.assert_called_once()
 
@@ -54,7 +54,7 @@ class TestOptimizer(unittest.TestCase):
         """
         self.model = DummyModel()
         self.reg_strength = 0.1
-        self.optimizer = Optimizer(
+        self.optimizer = SGD(
             learning_rate=1e-3, regularization_coeff=self.reg_strength, mode="l2"
         )
 
